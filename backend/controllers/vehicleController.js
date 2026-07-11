@@ -4,6 +4,19 @@ const createVehicle = async (req, res) => {
   try {
     const { make, model, category, price, quantity } = req.body;
 
+    // Duplicate check
+    const existingVehicle = await Vehicle.findOne({
+      make,
+      model,
+      category,
+    });
+
+    if (existingVehicle) {
+      return res.status(400).json({
+        message: "Vehicle already exists. Use update or restock instead.",
+      });
+    }
+
     const vehicle = await Vehicle.create({
       make,
       model,
