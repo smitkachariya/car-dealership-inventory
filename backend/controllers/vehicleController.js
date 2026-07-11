@@ -59,8 +59,37 @@ const searchVehicles = async (req, res) => {
   }
 };
 
+const updateVehicle = async (req, res) => {
+  try {
+    const vehicle = await Vehicle.findById(req.params.id);
+
+    if (!vehicle) {
+      return res.status(404).json({
+        message: "Vehicle not found",
+      });
+    }
+
+    const { make, model, category, price, quantity } = req.body;
+
+    // vehicle.make = make || vehicle.make;
+    // vehicle.model = model || vehicle.model;
+    vehicle.category = category || vehicle.category;
+    vehicle.price = price || vehicle.price;
+    // vehicle.quantity = quantity || vehicle.quantity;
+
+    const updatedVehicle = await vehicle.save();
+
+    res.status(200).json(updatedVehicle);
+  } catch (error) {
+    res.status(500).json({
+      message: error.message,
+    });
+  }
+};
+
 module.exports = {
   createVehicle,
   getVehicles,
   searchVehicles,
+  updateVehicle,
 };
