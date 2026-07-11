@@ -162,6 +162,39 @@ const purchaseVehicle = async (req, res) => {
   }
 };
 
+const restockVehicle = async (req, res) => {
+  try {
+    const vehicle = await Vehicle.findById(req.params.id);
+
+    if (!vehicle) {
+      return res.status(404).json({
+        message: "Vehicle not found",
+      });
+    }
+
+    const { quantity } = req.body;
+
+    if (!quantity || quantity <= 0) {
+      return res.status(400).json({
+        message: "Please provide a valid quantity",
+      });
+    }
+
+    vehicle.quantity += quantity;
+
+    await vehicle.save();
+
+    res.status(200).json({
+      message: "Vehicle restocked successfully",
+      vehicle,
+    });
+  } catch (error) {
+    res.status(500).json({
+      message: error.message,
+    });
+  }
+};
+
 module.exports = {
   createVehicle,
   getVehicles,
@@ -169,4 +202,5 @@ module.exports = {
   updateVehicle,
   deleteVehicle,
   purchaseVehicle,
+  restockVehicle,
 };
