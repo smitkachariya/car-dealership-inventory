@@ -41,7 +41,7 @@ Instructions will be added during development.
 
 ## AI Usage
 
-This project was developed with the assistance of AI tools including ChatGPT for:
+This project was developed with the assistance of AI tools including ChatGPT,Gemini for:
 
 - Architecture planning
 - API design discussions
@@ -49,7 +49,3 @@ This project was developed with the assistance of AI tools including ChatGPT for
 - Boilerplate generation
 
 All generated code was reviewed and modified before use.
-
-## License
-
-MIT License
