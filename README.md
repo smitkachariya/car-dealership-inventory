@@ -76,21 +76,52 @@ car-dealership-inventory/
 │
 ├── backend/
 │   ├── config/
+│   │   └── db.js
 │   ├── controllers/
+│   │   ├── authController.js
+│   │   └── vehicleController.js
 │   ├── middleware/
+│   │   ├── adminMiddleware.js
+│   │   └── authMiddleware.js
 │   ├── models/
+│   │   ├── Purchase.js
+│   │   ├── User.js
+│   │   └── Vehicle.js
 │   ├── routes/
+│   │   ├── authRoutes.js
+│   │   └── vehicleRoutes.js
+│   ├── tests/
+│   │   ├── setup.js
+│   │   ├── auth.test.js
+│   │   └── vehicle.test.js
 │   ├── server.js
 │   └── package.json
 │
 ├── frontend/
 │   ├── src/
 │   │   ├── components/
+│   │   │   ├── Navbar.jsx
+│   │   │   ├── VehicleCard.jsx
+│   │   │   └── VehicleForm.jsx
+│   │   ├── context/
+│   │   │   └── AuthContext.jsx
 │   │   ├── pages/
+│   │   │   ├── AdminPanel.jsx
+│   │   │   ├── Home.jsx
+│   │   │   ├── Login.jsx
+│   │   │   └── Register.jsx
 │   │   ├── services/
+│   │   │   └── api.js
 │   │   ├── App.jsx
+│   │   ├── App.css
+│   │   ├── index.css
 │   │   └── main.jsx
-│   │
+│   ├── public/
+│   │   ├── favicon.svg
+│   │   └── icons.svg
+│   ├── index.html
+│   ├── vite.config.js
+│   ├── eslint.config.js
 │   └── package.json
 │
 ├── screenshots/
@@ -204,29 +235,51 @@ Administrators can:
 
 ---
 
-# Validation and Testing
+# Testing
 
-The application was verified using:
+## Backend Test Suite
 
-- Manual frontend testing
-- API testing using Postman
-- Authentication flow validation
-- Role-based access verification
-- Inventory workflow testing
+### Running Tests
 
-## Tested Scenarios
+```bash
+cd backend
+npm test          # Run complete test suite
+npm run test:watch    # Run tests in watch mode
+npm run test:coverage # Generate test coverage report
+```
 
+### Final Test Results
+
+| Metric       | Value  |
+|--------------|--------|
+| Test Suites  | 2 passed, 2 total |
+| Tests        | 10 passed, 10 total |
+| Snapshots    | 0 |
+
+### Test Coverage
+
+| Metric       | Coverage |
+|--------------|----------|
+| Statements   | 73.42% |
+| Branches     | 40.74% |
+| Functions    | 63.15% |
+| Lines        | 75.24% |
+
+### Tested Functionality
+
+- API health check
 - User registration
+- Registration validation (duplicate email check)
 - User login
 - JWT authentication
-- Vehicle listing
-- Vehicle creation
-- Vehicle purchasing
-- Out-of-stock protection
-- Vehicle restocking
-- Vehicle deletion
+- Protected vehicle APIs
+- Vehicle creation (admin only)
+- Vehicle listing (authenticated users)
+- Vehicle purchase (stock reduction)
+- Admin vehicle restocking
+- Admin vehicle deletion
+- Non-admin vehicle deletion restriction
 - Role-based authorization
-- Protected routes
 
 ---
 
