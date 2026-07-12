@@ -9,7 +9,10 @@ const vehicleRoutes = require("./routes/vehicleRoutes");
 
 const app = express();
 
-connectDB();
+/* Only connect to DB if not in test mode (test mode uses mongodb-memory-server) */
+if (process.env.NODE_ENV !== "test") {
+  connectDB();
+}
 
 /* Middleware */
 app.use(cors());
@@ -25,6 +28,11 @@ app.use("/api/vehicles", vehicleRoutes);
 
 const PORT = process.env.PORT || 5000;
 
-app.listen(PORT, () => {
-  console.log(`Server running on port ${PORT}`);
-});
+/* Only start server if not in test mode */
+if (process.env.NODE_ENV !== "test") {
+  app.listen(PORT, () => {
+    console.log(`Server running on port ${PORT}`);
+  });
+}
+
+module.exports = app;
