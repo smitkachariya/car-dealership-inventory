@@ -19,6 +19,12 @@ function Home() {
       return;
     }
 
+    // redirect admin directly to admin panel
+    if (user?.role === "admin") {
+      navigate("/admin");
+      return;
+    }
+
     fetchVehicles();
   }, []);
 
@@ -117,19 +123,26 @@ function Home() {
                     </span>
                   </p>
 
-                  <button
-                    disabled={vehicle.quantity === 0}
-                    onClick={() => purchaseVehicle(vehicle._id)}
-                    className={`w-full mt-5 py-3 rounded-2xl font-bold transition ${
-                      vehicle.quantity === 0
-                        ? "bg-zinc-700 text-zinc-400 cursor-not-allowed"
-                        : "bg-amber-500 text-black hover:bg-amber-400"
-                    }`}
-                  >
-                    {vehicle.quantity === 0
-                      ? "Out Of Stock"
-                      : "Purchase Vehicle"}
-                  </button>
+                  {/* USER PURCHASE BUTTON */}
+                  {user?.role !== "admin" ? (
+                    <button
+                      disabled={vehicle.quantity === 0}
+                      onClick={() => purchaseVehicle(vehicle._id)}
+                      className={`w-full mt-5 py-3 rounded-2xl font-bold transition ${
+                        vehicle.quantity === 0
+                          ? "bg-zinc-700 text-zinc-400 cursor-not-allowed"
+                          : "bg-amber-500 text-black hover:bg-amber-400"
+                      }`}
+                    >
+                      {vehicle.quantity === 0
+                        ? "Out Of Stock"
+                        : "Purchase Vehicle"}
+                    </button>
+                  ) : (
+                    <div className="mt-5 bg-zinc-800 text-zinc-400 text-center py-3 rounded-2xl">
+                      Manage inventory from Admin Panel
+                    </div>
+                  )}
                 </div>
               </div>
             ))

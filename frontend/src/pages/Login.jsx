@@ -17,15 +17,32 @@ function Login() {
         password,
       });
 
-      localStorage.setItem("token", response.data.token);
-      localStorage.setItem("user", JSON.stringify(response.data));
+      console.log("Login Response:", response.data);
 
-      navigate("/");
+      // Save JWT token
+      localStorage.setItem("token", response.data.token);
+
+      // Save logged in user
+      localStorage.setItem(
+        "user",
+        JSON.stringify({
+          name: response.data.name,
+          role: response.data.role,
+        }),
+      );
+
+      // Redirect according to role
+      if (response.data.role === "admin") {
+        navigate("/admin");
+      } else {
+        navigate("/");
+      }
     } catch (error) {
+      console.log(error);
+
       alert(error.response?.data?.message || "Invalid email or password");
     }
   };
-
   return (
     <div className="min-h-screen bg-[#09090B] flex items-center justify-center px-6 py-10">
       <div className="w-full max-w-5xl bg-zinc-900/50 backdrop-blur-xl border border-zinc-800 rounded-3xl overflow-hidden shadow-2xl grid lg:grid-cols-2">

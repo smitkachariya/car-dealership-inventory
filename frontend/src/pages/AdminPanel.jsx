@@ -5,6 +5,7 @@ import Navbar from "../components/Navbar";
 function AdminPanel() {
   const [vehicles, setVehicles] = useState([]);
   const [editingVehicle, setEditingVehicle] = useState(null);
+  const [showForm, setShowForm] = useState(false);
 
   const [formData, setFormData] = useState({
     make: "",
@@ -26,6 +27,18 @@ function AdminPanel() {
       console.log(error);
     }
   };
+
+  const totalModels = vehicles.length;
+
+  const totalStock = vehicles.reduce(
+    (sum, vehicle) => sum + vehicle.quantity,
+    0,
+  );
+
+  const inventoryValue = vehicles.reduce(
+    (sum, vehicle) => sum + vehicle.price * vehicle.quantity,
+    0,
+  );
 
   const handleChange = (e) => {
     setFormData({
@@ -66,6 +79,7 @@ function AdminPanel() {
       });
 
       setEditingVehicle(null);
+      setShowForm(false);
 
       fetchVehicles();
     } catch (error) {
@@ -75,6 +89,7 @@ function AdminPanel() {
 
   const handleEdit = (vehicle) => {
     setEditingVehicle(vehicle);
+    setShowForm(true);
 
     setFormData({
       make: vehicle.make,
@@ -97,9 +112,7 @@ function AdminPanel() {
 
     try {
       await API.delete(`/vehicles/${id}`);
-
       alert("Vehicle deleted successfully");
-
       fetchVehicles();
     } catch (error) {
       alert(error.response?.data?.message || "Delete failed");
@@ -126,6 +139,7 @@ function AdminPanel() {
 
   const cancelEdit = () => {
     setEditingVehicle(null);
+    setShowForm(false);
 
     setFormData({
       make: "",
@@ -142,96 +156,151 @@ function AdminPanel() {
 
       <div className="max-w-7xl mx-auto px-8 py-10">
         {/* Header */}
-        <div className="mb-10">
-          <h1 className="text-5xl font-bold">Admin Dashboard</h1>
+        <div className="mb-12">
+          <p className="text-amber-400 uppercase tracking-[5px] text-sm mb-3">
+            INVENTORY CONTROL
+          </p>
 
-          <p className="text-zinc-400 mt-2">Manage inventory and vehicles.</p>
+          <div className="flex justify-between items-center">
+            <div>
+              <h1 className="text-6xl font-bold">Vehicle Inventory</h1>
+
+              <p className="text-zinc-400 mt-3">
+                Browse and manage available dealership vehicles.
+              </p>
+            </div>
+
+            <button
+              onClick={() => {
+                setShowForm(!showForm);
+                setEditingVehicle(null);
+              }}
+              className="bg-amber-500 hover:bg-amber-400 text-black font-bold px-6 py-4 rounded-2xl"
+            >
+              + Add Vehicle
+            </button>
+          </div>
+        </div>
+
+        {/* Dashboard Cards */}
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-12">
+          <div className="bg-zinc-900 border border-zinc-800 rounded-3xl p-8">
+            <p className="text-zinc-400">Vehicle Models</p>
+
+            <h2 className="text-5xl font-bold mt-4">{totalModels}</h2>
+          </div>
+
+          <div className="bg-zinc-900 border border-zinc-800 rounded-3xl p-8">
+            <p className="text-zinc-400">Total Stock</p>
+
+            <h2 className="text-5xl font-bold mt-4">{totalStock}</h2>
+          </div>
+
+          <div className="bg-zinc-900 border border-zinc-800 rounded-3xl p-8">
+            <p className="text-zinc-400">Inventory Value</p>
+
+            <h2 className="text-5xl font-bold text-amber-400 mt-4">
+              ₹{(inventoryValue / 10000000).toFixed(2)} Cr
+            </h2>
+          </div>
         </div>
 
         {/* Form */}
-        <div className="bg-zinc-900 border border-zinc-800 rounded-3xl p-10 mb-10">
-          <h2 className="text-3xl font-bold mb-8">
-            {editingVehicle ? "Update Vehicle" : "Add Vehicle"}
-          </h2>
-
-          <form
-            onSubmit={handleSubmit}
-            className="grid grid-cols-1 md:grid-cols-2 gap-6"
-          >
-            {/* Add Mode */}
-            {!editingVehicle && (
-              <>
-                <input
-                  type="text"
-                  name="make"
-                  placeholder="Make"
-                  value={formData.make}
-                  onChange={handleChange}
-                  className="bg-zinc-800 border border-zinc-700 rounded-xl p-4"
-                  required
-                />
-
-                <input
-                  type="text"
-                  name="model"
-                  placeholder="Model"
-                  value={formData.model}
-                  onChange={handleChange}
-                  className="bg-zinc-800 border border-zinc-700 rounded-xl p-4"
-                  required
-                />
-              </>
-            )}
-
-            {/* Edit Mode */}
-            {editingVehicle && (
-              <div className="md:col-span-2 bg-zinc-800 border border-zinc-700 rounded-xl p-5">
-                <p className="text-zinc-400 text-sm mb-2">Editing Vehicle</p>
-
-                <h3 className="text-2xl font-bold">
-                  {editingVehicle.make} {editingVehicle.model}
-                </h3>
-              </div>
-            )}
-
-            <input
-              type="text"
-              name="category"
-              placeholder="Category"
-              value={formData.category}
-              onChange={handleChange}
-              className="bg-zinc-800 border border-zinc-700 rounded-xl p-4"
-              required
-            />
-
-            <input
-              type="number"
-              name="price"
-              placeholder="Price"
-              value={formData.price}
-              onChange={handleChange}
-              className="bg-zinc-800 border border-zinc-700 rounded-xl p-4"
-              required
-            />
-
-            <button
-              type="submit"
-              className="bg-amber-500 hover:bg-amber-400 text-black font-bold rounded-xl py-4"
-            >
+        {(showForm || editingVehicle) && (
+          <div className="bg-zinc-900 border border-zinc-800 rounded-3xl p-10 mb-10">
+            <h2 className="text-3xl font-bold mb-8">
               {editingVehicle ? "Update Vehicle" : "Add Vehicle"}
-            </button>
+            </h2>
 
-            {editingVehicle && (
+            <form
+              onSubmit={handleSubmit}
+              className="grid grid-cols-1 md:grid-cols-2 gap-6"
+            >
+              {!editingVehicle && (
+                <>
+                  <input
+                    type="text"
+                    name="make"
+                    placeholder="Make"
+                    value={formData.make}
+                    onChange={handleChange}
+                    className="bg-zinc-800 border border-zinc-700 rounded-xl p-4"
+                    required
+                  />
+
+                  <input
+                    type="text"
+                    name="model"
+                    placeholder="Model"
+                    value={formData.model}
+                    onChange={handleChange}
+                    className="bg-zinc-800 border border-zinc-700 rounded-xl p-4"
+                    required
+                  />
+                </>
+              )}
+
+              {editingVehicle && (
+                <div className="md:col-span-2 bg-zinc-800 border border-zinc-700 rounded-xl p-5">
+                  <p className="text-zinc-400 text-sm mb-2">Editing Vehicle</p>
+
+                  <h3 className="text-2xl font-bold">
+                    {editingVehicle.make} {editingVehicle.model}
+                  </h3>
+                </div>
+              )}
+
+              <input
+                type="text"
+                name="category"
+                placeholder="Category"
+                value={formData.category}
+                onChange={handleChange}
+                className="bg-zinc-800 border border-zinc-700 rounded-xl p-4"
+                required
+              />
+
+              <input
+                type="number"
+                name="price"
+                placeholder="Price"
+                value={formData.price}
+                onChange={handleChange}
+                className="bg-zinc-800 border border-zinc-700 rounded-xl p-4"
+                required
+              />
+
+              {!editingVehicle && (
+                <input
+                  type="number"
+                  name="quantity"
+                  placeholder="Quantity"
+                  value={formData.quantity}
+                  onChange={handleChange}
+                  className="bg-zinc-800 border border-zinc-700 rounded-xl p-4"
+                  required
+                />
+              )}
+
               <button
-                type="button"
-                onClick={cancelEdit}
-                className="bg-zinc-700 hover:bg-zinc-600 rounded-xl font-bold py-4"
+                type="submit"
+                className="bg-amber-500 hover:bg-amber-400 text-black font-bold rounded-xl py-4"
               >
-                Cancel
+                {editingVehicle ? "Update Vehicle" : "Add Vehicle"}
               </button>
-            )}
-          </form>
-        </div>
+
+              {(editingVehicle || showForm) && (
+                <button
+                  type="button"
+                  onClick={cancelEdit}
+                  className="bg-zinc-700 hover:bg-zinc-600 rounded-xl font-bold py-4"
+                >
+                  Cancel
+                </button>
+              )}
+            </form>
+          </div>
+        )}
 
         {/* Vehicle List */}
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">

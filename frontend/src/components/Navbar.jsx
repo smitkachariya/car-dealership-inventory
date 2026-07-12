@@ -4,7 +4,7 @@ export default function Navbar() {
   const navigate = useNavigate();
 
   const user = JSON.parse(localStorage.getItem("user"));
-
+  console.log(user);
   const logout = () => {
     localStorage.clear();
     navigate("/login");
@@ -18,7 +18,9 @@ export default function Navbar() {
       </h1>
 
       <div className="flex items-center gap-6">
-        <p className="text-zinc-300">Welcome, {user?.name}</p>
+        <p className="text-zinc-300">
+          Welcome, {user?.name || user?.user?.name}
+        </p>
 
         {user?.role === "admin" && (
           <Link
