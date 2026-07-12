@@ -26,13 +26,26 @@ function Register() {
           password,
         },
       );
+      console.log(response.data);
 
-      const data = response.data;
+      // Store token
+      localStorage.setItem("token", response.data.token);
+      console.log("Stored Token:", localStorage.getItem("token"));
+      // Store user
+      localStorage.setItem(
+        "user",
+        JSON.stringify({
+          name: response.data.name,
+          role: response.data.role,
+        }),
+      );
 
-      localStorage.setItem("token", data.token);
-      localStorage.setItem("user", JSON.stringify(data));
-
-      navigate("/");
+      // Redirect according to role
+      if (response.data.role === "admin") {
+        navigate("/admin");
+      } else {
+        navigate("/");
+      }
     } catch (error) {
       alert(error.response?.data?.message || "Registration failed");
     }
@@ -45,10 +58,10 @@ function Register() {
       <div className="absolute bottom-[-150px] right-[-150px] h-[400px] w-[400px] rounded-full bg-orange-600/20 blur-3xl"></div>
 
       <div className="relative z-10 w-full max-w-5xl rounded-3xl overflow-hidden border border-zinc-800 bg-zinc-900/50 backdrop-blur-xl shadow-[0_0_60px_rgba(0,0,0,0.6)] grid lg:grid-cols-2">
-        {/* LEFT SECTION */}
+        {/* LEFT SIDE */}
         <div className="hidden lg:flex flex-col justify-center p-16 border-r border-zinc-800">
           <p className="text-amber-400 uppercase tracking-[6px] text-sm mb-6">
-            Car Dealership Inventory
+            CAR DEALERSHIP INVENTORY
           </p>
 
           <h1 className="text-6xl font-bold leading-tight text-white">
@@ -66,26 +79,23 @@ function Register() {
 
           <div className="flex gap-4 mt-10">
             <div className="bg-zinc-800/60 border border-zinc-700 px-5 py-4 rounded-xl text-white font-semibold">
-              <span className="text-amber-400 mr-2">🚗</span>
-              Vehicles
+              🚗 Vehicles
             </div>
 
             <div className="bg-zinc-800/60 border border-zinc-700 px-5 py-4 rounded-xl text-white font-semibold">
-              <span className="text-amber-400 mr-2">📦</span>
-              Inventory
+              📦 Inventory
             </div>
 
             <div className="bg-zinc-800/60 border border-zinc-700 px-5 py-4 rounded-xl text-white font-semibold">
-              <span className="text-amber-400 mr-2">💰</span>
-              Purchases
+              💰 Purchases
             </div>
           </div>
         </div>
 
-        {/* RIGHT SECTION */}
+        {/* RIGHT SIDE */}
         <div className="p-12 flex flex-col justify-center">
           <p className="text-amber-400 uppercase tracking-[4px] text-sm mb-3">
-            Register Here
+            REGISTER HERE
           </p>
 
           <h2 className="text-5xl font-bold text-white mb-3">Create Account</h2>

@@ -6,7 +6,6 @@ const registerUser = async (req, res) => {
   try {
     const { name, email, password } = req.body;
 
-    // Check if user already exists
     const existingUser = await User.findOne({ email });
 
     if (existingUser) {
@@ -15,19 +14,31 @@ const registerUser = async (req, res) => {
       });
     }
 
-    // Hash password
     const hashedPassword = await bcrypt.hash(password, 10);
 
-    // Create user
     const user = await User.create({
       name,
       email,
       password: hashedPassword,
     });
 
+    // Generate JWT immediately after registration
+    const token = jwt.sign(
+      {
+        id: user._id,
+        role: user.role,
+        name: user.name,
+      },
+      process.env.JWT_SECRET,
+      {
+        expiresIn: "7d",
+      },
+    );
+
     res.status(201).json({
-      message: "User registered successfully",
-      userId: user._id,
+      token,
+      role: user.role,
+      name: user.name,
     });
   } catch (error) {
     res.status(500).json({
@@ -35,7 +46,6 @@ const registerUser = async (req, res) => {
     });
   }
 };
-
 const loginUser = async (req, res) => {
   try {
     const { email, password } = req.body;
@@ -63,6 +73,7 @@ const loginUser = async (req, res) => {
       {
         id: user._id,
         role: user.role,
+        name: user.name,
       },
       process.env.JWT_SECRET,
       {
@@ -73,6 +84,7 @@ const loginUser = async (req, res) => {
     res.status(200).json({
       token,
       role: user.role,
+      name: user.name,
     });
   } catch (error) {
     res.status(500).json({
