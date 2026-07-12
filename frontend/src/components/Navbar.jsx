@@ -1,4 +1,4 @@
-import { useNavigate } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 
 export default function Navbar() {
   const navigate = useNavigate();
@@ -19,6 +19,15 @@ export default function Navbar() {
 
       <div className="flex items-center gap-6">
         <p className="text-zinc-300">Welcome, {user?.name}</p>
+
+        {user?.role === "admin" && (
+          <Link
+            to="/admin"
+            className="bg-amber-500 hover:bg-amber-400 text-black px-4 py-2 rounded-xl font-semibold"
+          >
+            Admin Panel
+          </Link>
+        )}
 
         <button
           onClick={logout}
